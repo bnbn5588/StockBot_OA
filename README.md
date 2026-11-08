@@ -36,6 +36,7 @@ accepted but has no effect — the default engine always uses its own history wi
 🔴 SELL · 1/5 trend reads up
 📡 Trend: Moderate (ADX: 28.9)
 🗓 Data as of 2026-11-06
+📅 Next earnings: 2026-11-17 (in 9 days)
 
 — Trend —
 🧭 Regime: DOWN (SMA200 204.39, close 186.64)
@@ -55,6 +56,18 @@ Trend reads: price vs SMA200, SMA50 vs SMA200, EMA20 vs EMA50, +DI vs −DI, MAC
 The first line shows the signal and how many of the five trend reads listed in the footer
 point up (0/5 = all down, 5/5 = all up). A ticker with under 200 trading days of history
 replies `HOLD (not enough history)`.
+
+The earnings line (both engines) comes from the API's `earnings` field and never changes
+the signal:
+
+| `earnings.days` | Line |
+|---|---|
+| 0–7 | `⚠️ Earnings in 4 days · 2026-11-12` (`today` / `tomorrow` for 0 / 1) — the price can gap on the report, which a trend signal cannot anticipate |
+| > 7 | `📅 Next earnings: 2026-11-17 (in 9 days)` |
+| < 0 | `📅 Last earnings: 2026-11-04 (4 days ago)` — the data source has not published the next date yet |
+| missing / `null` | no line (ETFs, or the lookup failed) |
+
+`(est.)` is added when the date is only an estimate.
 
 The legacy engine (`v1`) reply keeps its `SIGNAL (strength, confidence%)` first line, lists SMA/EMA/MACD, RSI, Stochastic, Bollinger, ATR and
 OBV signals instead and ends with `(legacy v1 engine)`. `⚠️ stale` is appended to the
@@ -93,7 +106,8 @@ x-api-key: {API_KEY}
 ```
 
 Response fields used: `recommendation`, `strength`, `confidence`, `trend_strength`,
-`data_as_of`, `stale`, `engine`, and `details` (per-indicator values).
+`data_as_of`, `stale`, `engine`, `earnings` (`{date, days, estimated}` or `null`), and
+`details` (per-indicator values).
 
 ## Configuration
 

@@ -93,8 +93,22 @@ function header(ticker, data, signalText) {
     `📡 Trend: ${data.trend_strength}\n` +
     `🗓 Data as of ${show(String(data.data_as_of || "").slice(0, 10))}` +
     (data.stale ? " ⚠️ stale" : "") +
+    earningsLine(data.earnings) +
     `\n\n`
   );
+}
+
+// Next earnings date from the API (context only, the signal ignores it).
+// Within a week it is a warning: the price can gap on the report.
+function earningsLine(e) {
+  if (!e || e.days === undefined || e.days === null) return "";
+  const est = e.estimated ? " (est.)" : "";
+  if (e.days < 0) return `\n📅 Last earnings: ${e.date} (${-e.days} days ago)`;
+  if (e.days <= 7) {
+    const when = e.days === 0 ? "today" : e.days === 1 ? "tomorrow" : `in ${e.days} days`;
+    return `\n⚠️ Earnings ${when} · ${e.date}${est}`;
+  }
+  return `\n📅 Next earnings: ${e.date}${est} (in ${e.days} days)`;
 }
 
 // Default engine (v2): regime-gated trend following. BUY = above the 200-day
