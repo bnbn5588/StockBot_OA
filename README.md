@@ -33,7 +33,7 @@ accepted but has no effect — the default engine always uses its own history wi
 ```
 📊 NVDA — Stock Analysis
 
-🔴 SELL (Moderate, 60%)
+🔴 SELL · 1/5 trend reads up
 📡 Trend: Moderate (ADX: 28.9)
 🗓 Data as of 2026-11-06
 
@@ -49,10 +49,14 @@ accepted but has no effect — the default engine always uses its own history wi
 📉 Bollinger: 187.73 – 235.36
 🔥 ATR(14): 7.77
 
-Confidence = how many of 5 trend reads agree, not a win probability.
+Trend reads: price vs SMA200, SMA50 vs SMA200, EMA20 vs EMA50, +DI vs −DI, MACD. They describe the trend — not a forecast or a win probability.
 ```
 
-The legacy engine (`v1`) reply lists SMA/EMA/MACD, RSI, Stochastic, Bollinger, ATR and
+The first line shows the signal and how many of the five trend reads listed in the footer
+point up (0/5 = all down, 5/5 = all up). A ticker with under 200 trading days of history
+replies `HOLD (not enough history)`.
+
+The legacy engine (`v1`) reply keeps its `SIGNAL (strength, confidence%)` first line, lists SMA/EMA/MACD, RSI, Stochastic, Bollinger, ATR and
 OBV signals instead and ends with `(legacy v1 engine)`. `⚠️ stale` is appended to the
 date line when the API reports that its market data is behind the latest session.
 

@@ -73,11 +73,23 @@ function parseRequest(text) {
 
 const EMOJI = { BUY: "🟢", SELL: "🔴", HOLD: "🟡" };
 
-function header(ticker, data) {
+// How many of v2's five trend reads point up (price vs SMA200, SMA50 vs
+// SMA200, EMA20 vs EMA50, +DI vs -DI, MACD histogram).
+function trendReadsUp(d) {
+  return [
+    pick(d, "Regime.signal") === "UP",
+    d.SMA_Signal === "BUY",
+    d.EMA_Signal === "BUY",
+    pick(d, "DI.signal") === "Bullish",
+    pick(d, "MACD.signal") === "Bullish",
+  ].filter(Boolean).length;
+}
+
+function header(ticker, data, signalText) {
   const reco = data.recommendation;
   return (
     `📊 ${ticker} — Stock Analysis\n\n` +
-    `${EMOJI[reco] || "⚪"} ${reco} (${data.strength}, ${data.confidence}%)\n` +
+    `${EMOJI[reco] || "⚪"} ${signalText}\n` +
     `📡 Trend: ${data.trend_strength}\n` +
     `🗓 Data as of ${show(String(data.data_as_of || "").slice(0, 10))}` +
     (data.stale ? " ⚠️ stale" : "") +
@@ -91,10 +103,10 @@ function header(ticker, data) {
 function formatV2(ticker, data) {
   const d = data.details || {};
   if (d.note) {
-    return header(ticker, data) + `ℹ️ ${d.note}`;
+    return header(ticker, data, `${data.recommendation} (not enough history)`) + `ℹ️ ${d.note}`;
   }
   return (
-    header(ticker, data) +
+    header(ticker, data, `${data.recommendation} · ${trendReadsUp(d)}/5 trend reads up`) +
     `— Trend —\n` +
     `🧭 Regime: ${show(pick(d, "Regime.signal"))} (SMA200 ${show(pick(d, "Regime.sma200"))}, close ${show(pick(d, "BollingerBands.close"))})\n` +
     `📈 SMA50 vs SMA200: ${show(d.SMA_Signal)}\n` +
@@ -105,7 +117,8 @@ function formatV2(ticker, data) {
     `💡 RSI: ${show(pick(d, "RSI.value"))} → ${show(pick(d, "RSI.signal"))}\n` +
     `📉 Bollinger: ${show(pick(d, "BollingerBands.lower"))} – ${show(pick(d, "BollingerBands.upper"))}\n` +
     `🔥 ATR(14): ${show(pick(d, "ATR14.value"))}\n\n` +
-    `Confidence = how many of 5 trend reads agree, not a win probability.`
+    `Trend reads: price vs SMA200, SMA50 vs SMA200, EMA20 vs EMA50, +DI vs −DI, MACD. ` +
+    `They describe the trend — not a forecast or a win probability.`
   );
 }
 
@@ -113,7 +126,7 @@ function formatV2(ticker, data) {
 function formatV1(ticker, data) {
   const d = data.details || {};
   return (
-    header(ticker, data) +
+    header(ticker, data, `${data.recommendation} (${data.strength}, ${data.confidence}%)`) +
     `— Trend Indicators —\n` +
     `📈 SMA: ${show(d.SMA_Signal)}\n` +
     `📉 EMA: ${show(d.EMA_Signal)}\n` +
