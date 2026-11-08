@@ -156,7 +156,10 @@ function formatV1(ticker, data) {
   );
 }
 
-exports.LineBot = functions.https.onRequest(async (req, res) => {
+exports.LineBot = functions
+  .region("asia-southeast1")
+  .runWith({ serviceAccount: "1092928750813-compute@developer.gserviceaccount.com" })
+  .https.onRequest(async (req, res) => {
   try {
     const events = (req.body && req.body.events) || [];
     // LINE's "Verify" button posts an empty events array.
