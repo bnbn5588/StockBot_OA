@@ -143,10 +143,15 @@ firebase deploy --only functions
 deploy. ESLint is configured for `ecmaVersion: 2018`, so avoid newer syntax such as
 optional chaining (`?.`) and nullish coalescing (`??`).
 
+The function runs on Node 22 in `asia-southeast1` (closest region to Thailand) as the
+project's compute default service account (`.runWith({serviceAccount})` in `index.js`),
+because the default App Engine service account no longer exists in this project. Changing
+the region changes the URL below — update the LINE webhook URL after such a deploy.
+
 After deploying, the function URL is:
 
 ```
-https://us-central1-bnbn5588.cloudfunctions.net/LineBot
+https://asia-southeast1-bnbn5588.cloudfunctions.net/LineBot
 ```
 
 ## LINE Developers Console setup
@@ -168,13 +173,13 @@ message quota (push and broadcast messages do).
 cd functions
 npm ci
 npm run lint
-npm run serve        # Firebase emulator: http://localhost:5001/bnbn5588/us-central1/LineBot
+npm run serve        # Firebase emulator: http://localhost:5001/bnbn5588/asia-southeast1/LineBot
 ```
 
 Send a sample webhook body to the emulator:
 
 ```bash
-curl -X POST http://localhost:5001/bnbn5588/us-central1/LineBot \
+curl -X POST http://localhost:5001/bnbn5588/asia-southeast1/LineBot \
   -H 'Content-Type: application/json' \
   -d '{"events":[{"type":"message","replyToken":"dummy","message":{"type":"text","text":"AAPL"}}]}'
 ```
@@ -194,7 +199,7 @@ firebase functions:log --only LineBot
 firebase.json          Functions config; lint runs as predeploy
 functions/
   index.js             Webhook handler, request parsing, reply formatting
-  package.json         Node 20; axios, dotenv, firebase-functions
+  package.json         Node 22; axios, dotenv, firebase-functions
   .eslintrc.js         ESLint (google style, ecmaVersion 2018)
   .env                 Secrets (not committed)
 ```
