@@ -57,6 +57,24 @@ The first line shows the signal and how many of the five trend reads listed in t
 point up (0/5 = all down, 5/5 = all up). A ticker with under 200 trading days of history
 replies `HOLD (not enough history)`.
 
+#### Reading the reply
+
+| Line | Meaning |
+|---|---|
+| `🔴 SELL` / `🟢 BUY` / `🟡 HOLD` | **BUY** = close above its 200-day average, EMA20 above EMA50 and +DI above −DI (an uptrend to follow). **SELL** = close below the 200-day average, or EMA20 below EMA50 with −DI above +DI — the trend is broken, "exit / stay out"; it does not predict how far the price will fall. **HOLD** = long-term uptrend intact, short-term mixed |
+| `· 1/5 trend reads up` | How many of the five trend reads (footer) point up — agreement, not a probability |
+| `📡 Trend: Moderate (ADX: 28.9)` | Trend strength regardless of direction: ADX < 20 weak, 20–40 moderate, > 40 strong |
+| `🗓 Data as of` | US trading session whose close the analysis uses |
+| `📅` / `⚠️` earnings | Next earnings report (table below) |
+| `🧭 Regime` | `UP` / `DOWN` = close above / below the 200-day simple average (value shown) |
+| `📈 SMA50 vs SMA200` | `BUY` when the 50-day average is above the 200-day |
+| `📉 EMA20 vs EMA50` | `BUY` when the 20-day exponential average is above the 50-day — the short-term trend |
+| `↕️ +DI / −DI` | Directional movement: buying vs selling pressure; `Bearish` when −DI is larger |
+| `📊 MACD hist` | Short-term momentum; negative = fading |
+| `💡 RSI` | 14-day Wilder RSI: > 70 `Overbought`, < 30 `Oversold` |
+| `📉 Bollinger` | 20-day band (lower – upper), ±2 standard deviations around the 20-day average |
+| `🔥 ATR(14)` | Average daily price range over 14 days, in the stock's currency |
+
 The earnings line (both engines) comes from the API's `earnings` field and never changes
 the signal:
 
